@@ -1,0 +1,60 @@
+body{
+    height: 100vh;
+    justify-content: center;
+    background: #f6f7fb;
+  }
+  .container{
+    height:5vh;
+    background: #fff;
+    padding: 2rem 20rem;
+    border-radius: 20px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .components{
+    display: flex;
+    column-gap: 2rem;
+    justify-content:center; 
+  }
+  .component{
+    opacity: 0.5;
+    transition: opacity ease;
+  }
+  
+  .component:hover{
+    opacity: 1;
+  }
+
+  .startdiv{
+    width: 100px; 
+    height: 50px; 
+    border-style:solid; 
+    border-radius: 30px;
+    border-width: 8px;
+  }
+  .inputdiv{
+    width: 100px; 
+    height: 40px;
+    border-style: solid;
+    transform: skew(20deg);
+    border-width: 8px;
+  }
+  .processdiv{
+    width: 100px; 
+    height: 40px; 
+    border-style:solid; 
+    border-width: 8px;
+  }
+  .descisiondiv{
+    width: 40px; 
+    height: 40px; 
+    border-style:solid; 
+    transform: rotate(-45deg);
+    border-width: 8px;
+  }
+  .arrowdiv{
+    width: 0px;
+    height: 60px;
+    border-style: solid;
+    border-width: 2px;
+  }
