@@ -1,4 +1,3 @@
-
 const pi = Math.PI;
 var id = 1;
 const typeSizeMap = {
@@ -78,38 +77,38 @@ class FlowChart {
             this.mouseOrg.x=this.mouseX;
             this.mouseOrg.y=this.mouseY;
             //Finds whether the selected element will be moved or the edges will change
-            const a = this.boxs.some((box)=>{
-                if(box.x+10<=this.mouseX && box.x+box.w-10>=this.mouseX && box.y+10<=this.mouseY && box.y+box.h-10>=this.mouseY){
-                    this.activeElementId=box.id;
-                    return true;
-                }
-                else if(box.x-10<=this.mouseX && box.x+box.w+10>=this.mouseX && box.y-10<=this.mouseY && box.y+box.h+10>=this.mouseY){
-                    this.activeElementId=box.id;
-                    this.elements.some((element)=>{
-                        if(element.id==box.id)
-                        element.active="large";
-                    })
-                    
+            const a = this.boxs.some((bx)=>{
+                if(bx.x-5<=this.mouseX && bx.x+bx.w+5>=this.mouseX && bx.y-5<=this.mouseY && bx.y+bx.h+5 >= this.mouseY){
+                    this.activeElementId = bx.id;
+                    if((bx.x-4<=this.mouseX && bx.x+6>=this.mouseX && bx.y+6<=this.mouseY && bx.y+bx.y+bx.h-4>=this.mouseY) ||
+                    (bx.x+6<=this.mouseX && bx.x+bx.w-6>=this.mouseX && bx.y-4<=this.mouseY && bx.y+6>=this.mouseY) ||
+                    (bx.x+6<=this.mouseX && bx.x+bx.w-6>=this.mouseX && bx.y+bx.h-4<=this.mouseY && bx.y+bx.h+6>=this.mouseY) ||
+                    (bx.x+bx.w-5<=this.mouseX && bx.x+bx.w+5>=this.mouseX && bx.y+6<=this.mouseY && bx.y+bx.y+bx.h-4>=this.mouseY)){
+                        this.elements.some((element)=>{
+                            if(element.id==bx.id){
+                                element.active="large";
+                            }
+                        });
+                    }
+                    if((bx.x-5<=this.mouseX && bx.x+5>=this.mouseX && bx.y-5<=this.mouseY && bx.y+5>=this.mouseY) ||
+                        (bx.x+bx.w-5<=this.mouseX && bx.x+bx.w+5>=this.mouseX && bx.y-5<=this.mouseY && bx.y+5>=this.mouseY) ||
+                        (bx.x-5<=this.mouseX && bx.x+5>=this.mouseX && bx.y+bx.h-5<=this.mouseY && bx.y+bx.h+5>=this.mouseY) ||
+                        (bx.x+bx.w-5<=this.mouseX && bx.x+bx.w+5>=this.mouseX && bx.y+bx.h-5<=this.mouseY && bx.y+bx.h+5>=this.mouseY)){
+                        this.elements.some((element)=>{
+                            if(element.id==bx.id){
+                                element.active="deg";
+                            }
+                        });
+                    }
                     return true;
                 }
             });
-            /*const a = this.elements.some((element)=>{
-                if(element.x+5<=this.mouseX && element.x+element.width-5>=this.mouseX && element.y+5<=this.mouseY && element.y+element.height-5>=this.mouseY){
-                    this.activeElementId=element.id;
-                    return true;
-                }
-                else if(element.x-5<=this.mouseX && element.x+element.width+5>=this.mouseX && element.y-5<=this.mouseY && element.y+element.height+5>=this.mouseY){
-                    this.activeElementId=element.id;
-                    element.active="large";
-                    console.log("large,", element.id);
-                    return true;
-                }
-            });*/
             //Finds which end of the line is held
             const b = this.lines.some((line)=>{
                 if(line.x1-10<this.mouseX && line.x1+10>this.mouseX && line.y1-10<this.mouseY && line.y1+10>this.mouseY) {
                     this.activeElementId=line.id;
                     line.active="1";
+                    console.log("1")
                     return true;
                 }else if(line.x2-10<=this.mouseX && line.x2+10>=this.mouseX && line.y2-10<=this.mouseY && line.y2+10>=this.mouseY){
                     this.activeElementId=line.id;
@@ -117,80 +116,80 @@ class FlowChart {
                     return true;
                 }
             });
-            if (!a && !b) this.activeElementId=""
+            if (!a && !b) this.activeElementId="";
         });
         this.canvas.addEventListener("mouseup",()=>{
-            if(this.isDragActive && this.activeElementId!="" && this.mouseOrg.x!=this.mouseX && this.mouseOrg.y!= this.mouseY){
-                    this.elements.some((element)=>{
-                        if(this.activeElementId==element.id){
-                            //Allows the selected element to be moved
-                            if(element.active!="large"){
-                                let newmouseX, newmouseY;
-                                newmouseX = this.mouseOrg.x - element.x;
-                                newmouseY = this.mouseOrg.y - element.y;
-                                element.x=this.mouseX-newmouseX;
-                                element.y=this.mouseY-newmouseY;
-                                
-                                return true;
-                            }else{
-                            //It causes the selected element to grow or shrink from the selected edge when its corners are pulled
-                                this.boxs.some((bx)=>{
-                                    if(this.activeElementId == bx.id){
-                                        console.log(this.mouseOrg.y, bx.y, this.mouseOrg.x, bx.x);
-                                        if(this.mouseOrg.y-3<=bx.y){
-                                            element.y += (this.mouseY-this.mouseOrg.y);
-                                            element.height -= (this.mouseY-this.mouseOrg.y);
-                                            bx.y=element.y;bx.h=element.height;
-                                        }
-                                        else if(this.mouseOrg.x-3<=bx.x){
-                                            element.x += (this.mouseX-this.mouseOrg.x);
-                                            element.width -=  (this.mouseX-this.mouseOrg.x);
-                                        }
-                                        else if(bx.y+bx.h-3<=this.mouseOrg.y && bx.y+bx.h+10>=this.mouseOrg.y){
-                                            element.height +=  (this.mouseY-this.mouseOrg.y);
-                                        }
-                                        else if(bx.x+bx.w-3<=this.mouseOrg.x && bx.x+bx.w+10>=this.mouseOrg.x){
-                                            element.width +=  (this.mouseX-this.mouseOrg.x);
-                                        }
-                                        element.active="";                                         
-                                        return true;
-                                    }
-                                });   
-                            }
-                        }
-                    });
-                    //It allows you to move the line by holding the ends of the lines
-                    this.lines.some((line)=>{
-                        if(this.activeElementId == line.id){
-                            if(line.active=="1"){
-                                line.x1 = this.mouseX;
-                                line.y1 = this.mouseY;
-                                return true;
-                            }else if(line.active=="2"){
-                                line.x2 = this.mouseX;
-                                line.y2 = this.mouseY;   
-                                return true;     
-                            }
-                            line.active="";
-                        }
-                    });
-            }
-            //Clicking on the upper left corner of the selected element causes it to rotate 10 degrees each time
-            if(this.isDragActive && this.activeElementId!="" && this.mouseOrg.x==this.mouseX && this.mouseOrg.y== this.mouseY){
+            if(this.isDragActive==true && this.activeElementId!="" && this.mouseOrg.x !=this.mouseX && this.mouseOrg.y != this.mouseY){
                 this.elements.some((element)=>{
-                    if(this.activeElementId==element.id){
-                            if(element.x-5<=this.mouseX && element.x+5>=this.mouseX && element.y-5<=this.mouseY && element.y+5>=this.mouseY){
-                                   element.deg+=10;
-                            }
+                    if(element.id == this.activeElementId){
+                        //It causes the selected element to grow or shrink from the selected edge when its corners are pulled
+                        if(element.active=="large"){
+                            this.boxs.some((bx)=>{
+                                if(bx.id==this.activeElementId){
+                                    if((bx.x-4<=this.mouseOrg.x && bx.x+6>=this.mouseOrg.x && bx.y+6<=this.mouseOrg.y && bx.y+bx.y+bx.h-4>=this.mouseOrg.y)){
+                                        element.x += (this.mouseX-this.mouseOrg.x);
+                                        element.width -=  (this.mouseX-this.mouseOrg.x);
+                                    }
+                                    else if((bx.x+6<=this.mouseOrg.x && bx.x+bx.w-6>=this.mouseOrg.x && bx.y-4<=this.mouseOrg.y && bx.y+6>=this.mouseOrg.y)){
+                                        element.y += (this.mouseY-this.mouseOrg.y);
+                                        element.height -= (this.mouseY-this.mouseOrg.y);
+                                    }
+                                    else if((bx.x+6<=this.mouseOrg.x && bx.x+bx.w-6>=this.mouseOrg.x && bx.y+bx.h-4<=this.mouseOrg.y && bx.y+bx.h+6>=this.mouseOrg.y)){
+                                        element.height +=  (this.mouseY-this.mouseOrg.y);
+                                    }
+                                    else{
+                                        element.width +=  (this.mouseX-this.mouseOrg.x);
+                                    }
+                                    return true;
+                                }
+                            });
                         }
+                        //Allows the selected element to be moved
+                        else{
+                            let newmouseX, newmouseY;
+                            newmouseX = this.mouseOrg.x - element.x;
+                            newmouseY = this.mouseOrg.y - element.y;
+                            element.x=this.mouseX-newmouseX;
+                            element.y=this.mouseY-newmouseY;
+                        }
+                        element.active="";
+                        return true;
+                    }
                 });
-            }    
+                //It allows you to move the line by holding the ends of the lines
+                this.lines.some((line)=>{
+                    if(this.activeElementId == line.id){
+                        if(line.active=="1"){
+                            line.x1 = this.mouseX;
+                            line.y1 = this.mouseY;
+                            return true;
+                        }else if(line.active=="2"){
+                            line.x2 = this.mouseX;
+                            line.y2 = this.mouseY;   
+                            return true;     
+                        }
+                        line.active="";
+                    }
+                });
+            }
+            //Clicking on the element's corners rotates it by 10 degrees
+            if(this.isDragActive==true && this.activeElementId!="" && this.mouseOrg.x ==this.mouseX && this.mouseOrg.y == this.mouseY){
+                this.elements.some((element)=>{
+                    if(element.id == this.activeElementId){
+                        if(element.active=="deg"){
+                            element.deg+=10;
+                            if(element.deg==100) element.deg=0;
+                            element.active="";
+                        }
+                    }
+                    return true;
+                });
+            }
+ 
             this.isDragActive=false;
         });
-
         //Allows text to be written when double-clicking on the selected elemnet or line.
         this.canvas.addEventListener("dblclick", ()=>{
-            console.log("dbl", this.isDragActive, this.activeElementId);
             if(this.activeElementId!=""){
                 let textt = prompt("Please enter text : ");
                 this.elements.some((element)=>{
@@ -198,7 +197,7 @@ class FlowChart {
                         element.text=textt;
                         return true;
                     }
-                });
+                });               
                 this.lines.some((line)=>{
                     if(this.activeElementId == line.id){
                         line.text=textt;
@@ -206,53 +205,144 @@ class FlowChart {
                     }
                 });
             }
+            this.isDragActive=false;
         });
         //When the delete key is pressed while there is a selected element or line, the element or line is deleted
         document.addEventListener("keydown",(event)=>{
             if(event.key=="Backspace" &&  this.activeElementId!=""){
-                    this.elements.some((element)=>{
-                        if(this.activeElementId==element.id){
-                            this.elements.splice(this.elements.indexOf(element), 1);
-                            return true;
-                        }
-                    });
-                    this.lines.some((line)=>{
-                        if(this.activeElementId==line.id){
-                            this.lines.splice(this.lines.indexOf(line), 1);
-                            return true;
-                        }                       
-                    });
+                this.elements.some((element)=>{
+                    if(this.activeElementId==element.id){
+                        this.elements.splice(this.elements.indexOf(element), 1);
+                        return true;
+                    }
+                });
+                this.lines.some((line)=>{
+                    if(this.activeElementId==line.id){
+                        this.lines.splice(this.lines.indexOf(line), 1);
+                        return true;
+                    }                       
+                });
             }
+            this.isDragActive=false;
             this.activeElementId=""
         });
-        this.render()
+        this.render();
+        this.export();
     }
-
+    //convert canvas to png
+    export(){
+        let canvasUrl = this.canvas.toDataURL("image/png");
+        const createEl = document.createElement('a');
+        createEl.href = canvasUrl;
+        createEl.download = "download-this-canvas";
+        createEl.click();
+        createEl.remove();
+    }
     render() {
-
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.beginPath();
         this.ctx.strokeStyle = "red";
         this.ctx.lineWidth = 3;
         this.ctx.arc(this.mouseX, this.mouseY, 10, 0, 2 * pi);
         this.ctx.stroke();
-
         this.drawElement();
+        this.boundingBox();
         this.drawLine();
         this.boundingBoxLine();
         if(this.activeElementId!=""){
-            let a = this.elements.some((element)=>{
-                if(this.activeElementId==element.id){
-                    this.boundingBox(element);
+            this.elements.some((element)=>{
+                if(element.id==this.activeElementId){
+                    this.boundingBoxActive(this.activeElementId);
                     return true;
                 }
-            })
+            });
         }
         requestAnimationFrame(
             this.render.bind(this)//referans kaybettiği için bind ediliyor.
         );
     }
+    boundingBox(){
+        this.elements.forEach((element)=>{
+            let x=element.x, y=element.y, w=element.width, h=element.height, deg=element.deg;
+            if(element.type=="input"){
+                w=w+30;
+            }
+            else if(element.type=="decision"){
+                x=x-element.width/2;
+            }
+            if(deg!=0){
+                let ax=w*Math.cos(deg*pi/180);
+                let ay=-w*Math.sin(deg*pi/180);
+                let bx=-h*Math.sin(deg*pi/180);
+                let by=h*Math.cos(deg*pi/180);
+                let cx=w*Math.cos(deg*pi/180)-h*Math.sin(deg*pi/180);
+                let cy=w*Math.sin(deg*pi/180)+h*Math.cos(deg*pi/180);
+                let xxs=[x,x+ax,x+bx,x+cx];
+                let yys=[y,y-ay,y+by,y+cy];
+    
+                xxs = xxs.sort();
+                yys = yys.sort();
 
+                if((yys[3]-yys[0])<0){
+                    let k,b;
+                    for(let i=0;i<yys.length-1;i++){
+                        if(yys[i]<yys[i+1]) k=yys[i];
+                        else k=yys[i+1];
+
+                        if(yys[i]>yys[i+1]) b=yys[i];
+                        else b=yys[i+1];
+                    }
+                    console.log(b,k);
+                    h=b-k;
+                }else{
+
+                    h=yys[3]-yys[0];
+                }
+                x=xxs[0];
+                y=yys[0];
+                w=xxs[3]-xxs[0];
+
+            }
+
+                const a = this.boxs.some((bx)=>{
+                    if(bx.id==element.id){
+                        bx.x=x; bx.y=y; 
+                        bx.w=w;
+                        bx.h=h;
+                        return true;
+                    }
+                });
+            if(!a){
+                this.boxs.push(new Box(x,y,w,h,element.id));
+            }
+        });
+    }
+    boundingBoxActive(id){
+        this.boxs.some((bx)=>{
+            if(bx.id==id){
+                let x= bx.x;    let y=bx.y; let w=bx.w; let h=bx.h;
+                //console.log(x,y,w,h);
+                this.ctx.save();
+                this.ctx.lineWidth=1;
+                this.ctx.beginPath();
+                this.ctx.strokeStyle="black";
+                this.ctx.strokeRect(x, y, w, h);
+    
+                this.ctx.strokeRect(x-5, y-5, 6, 6);
+                this.ctx.strokeRect(x+w, y-5, 6, 6);
+                this.ctx.strokeRect(x-5, y+h, 6, 6);
+                this.ctx.strokeRect(x+w, y+h, 6 ,6);
+    
+    
+                this.ctx.strokeRect(x+w/2, y-5, 6, 6);
+                this.ctx.strokeRect(x+w/2-5, y+h, 6, 6);
+                this.ctx.strokeRect(x-5, y+h/2, 6, 6);
+                this.ctx.strokeRect(x+w, y+h/2-5, 6 ,6);
+                this.ctx.restore();
+            }
+        });
+            
+    }
     boundingBoxLine(){
         let x1, x2,y1,y2;
         this.lines.forEach((line)=>{
@@ -267,44 +357,6 @@ class FlowChart {
     
             this.ctx.restore();
         })
-    }
-    boundingBox(element){
-        this.boxs.some((bx)=>{
-            if(bx.id == element.id){
-                this.boxs.splice(this.boxs.indexOf(bx), 1);
-                return true
-            }
-        });
-        let x=element.x-2;        let y=element.y-2;        let w=element.width+4;        let h=element.height+4;
-
-        
-        if(element.type=="input"){
-            w=w+30;
-        }
-        else if(element.type=="decision"){
-            x=x-element.width/2;
-        }
-        this.ctx.save();
-        
-        this.ctx.lineWidth=1;
-        this.ctx.beginPath();
-        this.ctx.strokeStyle="black";
-        this.ctx.strokeRect(x, y, w, h);
-
-        this.ctx.strokeRect(x-3, y-3, 6, 6);
-        this.ctx.strokeRect(x+w-3, y-3, 6, 6);
-        this.ctx.strokeRect(x-3, y+h-3, 6, 6);
-        this.ctx.strokeRect(x+w-3, y+h-3, 6 ,6);
-
-        this.ctx.strokeRect(x+w/2, y-3, 6, 6);
-        this.ctx.strokeRect(x+w/2, y+h-3, 6, 6);
-        this.ctx.strokeRect(x-3, y+h/2, 6, 6);
-        this.ctx.strokeRect(x+w-3, y+h/2, 6 ,6);
-
-        this.ctx.restore();
-        
-        const bx = new Box(x, y,w,h,element.id);
-        this.boxs.push(bx);
     }
     drawLine(){
         this.lines.forEach((line)=>{
@@ -364,36 +416,30 @@ class FlowChart {
                     break;
             }
             this.ctx.restore();
-        })
+        });
     }
-
     addItem(type) {
         if(type=="line"){
             const li = new Line(Math.random() * this.canvas.width, Math.random() * this.canvas.height,Math.random() * this.canvas.width, Math.random() * this.canvas.height);
             this.lines.push(li);
             this.activeElementId=li.id
-        }else{
+        }else if(type!="export"){
             const el=new Element(Math.random() * this.canvas.width, Math.random() * this.canvas.height, type)
             this.elements.push(el);
-            this.activeElementId=el.id
+            this.activeElementId=el.id;
         }
-
-
+        else{
+            this.export();
+        }
     }
 }
-
 
 const flw = new FlowChart({
     host: document.getElementById("cvs")
 })
-
-
-
-
 Array.from(document.getElementsByClassName("component")).forEach((button) => {
     button.addEventListener("click", (event) => {
         const type = button.getAttribute('data-flow-component')
         flw.addItem(type)
     });
 });
-
